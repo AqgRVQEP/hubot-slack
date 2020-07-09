@@ -11,9 +11,6 @@ ENV PATH /usr/local/bin:$PATH
 # > At the moment, setting "LANG=C" on a Linux system *fundamentally breaks Python 3*, and that's not OK.
 ENV LANG C.UTF-8
 
-# 更改安装源为 ustc 源
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
-
 ENV GPG_KEY 0D96DF4D4110E5C43FBFB17F2D347EA6AA65421D
 ENV PYTHON_VERSION 3.6.10
 
@@ -186,7 +183,6 @@ RUN set -xe \
         sqlite-dev tcl-dev tk tk-dev util-linux-dev xz-dev zlib-dev \
     && apk add git curl bash \
     && rm -rf /var/cache/apk/* \
-    && npm config set registry https://registry.npm.taobao.org/ \
     && npm install -g yo generator-hubot \
     && adduser -s /bin/sh -D hubot
 
@@ -212,6 +208,11 @@ RUN set -xe \
                           hubot-jenkins-enhanced \
                           hubot-auth \
     && sed -i -r 's/^\s+#//' scripts/example.coffee
+
+RUN set -ex \
+    && pip install requests \
+	&& pip install tencentcloud-sdk-python\
+	&& pip install ansible
 
 VOLUME /home/hobot \
        /usr/local/bin \

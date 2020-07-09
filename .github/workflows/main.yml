@@ -1,0 +1,53 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches:
+      - master
+
+    tags:
+      - v*
+
+  pull_request:
+
+env:
+  dockerhub_username: ${{ secrets.dockerhub_Username }}
+  dockerhub_password: ${{ secrets.dockerhub_Password }}
+  IMAGE_NAME: hubot-slack
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag $IMAGE_NAME
+
+    - name: Log into DockerHub
+      run: docker login --username=${{ dockerhub_username }} --password=${{ secrets.dockerhub_password }}
+
+    - name: Push image
+      run: |
+        IMAGE_ID=${{ dockerhub_username }}/$IMAGE_NAME
+
+        # Change all uppercase to lowercase
+        IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+
+        # Strip git ref prefix from version
+        VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+
+        # Strip "v" prefix from tag name
+        [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+
+        # Use Docker `latest` tag convention
+        [ "$VERSION" == "master" ] && VERSION=latest
+
+        echo IMAGE_ID=$IMAGE_ID
+        echo VERSION=$VERSION
+
+        docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
+        docker push $IMAGE_ID:$VERSION
