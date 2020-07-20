@@ -12,20 +12,21 @@ RUN apk --update --no-cache add \
         git \
         openssh-client \
         openssl \
-	python3 \
+		python3 \
         rsync \
-        sshpass
+        sshpass \
+		py3-pip
 
 RUN apk --update add --virtual \
         .build-deps \
-	python3-dev \
-	libffi-dev \
+		python3-dev \
+		libffi-dev \
         openssl-dev \
         build-base \
-    && pip3 install --upgrade \
+    && pip install --upgrade \
         pip \
         cffi \
-	&& pip3 install \
+	&& pip install \
         ansible==${ANSIBLE_VERSION} \
         ansible-lint==${ANSIBLE_LINT_VERSION} \
     && apk del \
@@ -46,13 +47,15 @@ RUN set -xe \
         sudo \
     && apk add --no-cache bzip2-dev \
         coreutils dpkg-dev dpkg expat-dev \
-        findutils gcc gdbm-dev libc-dev libffi-dev libnsl-dev libtirpc-dev \
-        linux-headers make ncurses-dev openssl-dev pax-utils readline-dev \
+        findutils gcc gdbm-dev libc-dev libnsl-dev libtirpc-dev \
+        linux-headers make ncurses-dev pax-utils readline-dev \
         sqlite-dev tcl-dev tk tk-dev util-linux-dev xz-dev zlib-dev \
-    && apk add git curl bash \
+    && apk add git curl \
     && rm -rf /var/cache/apk/* \
     && npm install -g yo generator-hubot \
-    && adduser -s /bin/sh -D hubot
+    && adduser -s /bin/sh -D hubot \
+	&& echo "hubot ALL=(ALL) ALL" >> /etc/sudoers \
+	&& mkdir /etc/ansible
 
 USER hubot
 WORKDIR /home/hubot
@@ -76,8 +79,11 @@ RUN set -xe \
                           hubot-auth \
     && sed -i -r 's/^\s+#//' scripts/example.coffee
 
+COPY ./ansible.cfg .ansible.cfg
+
 VOLUME /home/hobot \
        /usr/local/bin \
+       /etc/ansible
 EXPOSE 8080
 
 CMD ["./bin/hubot", "--adapter", "slack"]
