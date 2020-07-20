@@ -163,6 +163,8 @@ RUN set -ex; \
 		\) -exec rm -rf '{}' +; \
 	rm -f get-pip.py
 
+RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/v3.10/main/ ansible=2.8.11-r0
+
 ENV HUBOT_NAME=Hubot
 ENV HUBOT_ADAPTER=slack
 ENV HUBOT_DESCRIPTION=$HUBOT_NAME-$HUBOT_ADAPTER
