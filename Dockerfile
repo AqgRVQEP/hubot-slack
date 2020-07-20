@@ -2,7 +2,7 @@
 # Dockerfile for hubot
 #
 
-FROM alpine:3.9
+FROM alpine:3.12
 
 ENV ANSIBLE_VERSION 2.8.13
 ENV ANSIBLE_LINT_VERSION 4.2.0
@@ -12,20 +12,19 @@ RUN apk --update --no-cache add \
         git \
         openssh-client \
         openssl \
-		python3 \
+	python3 \
         rsync \
         sshpass
 
 RUN apk --update add --virtual \
         .build-deps \
-		python3-dev \
-		libffi-dev \
+	python3-dev \
+	libffi-dev \
         openssl-dev \
         build-base \
     && pip3 install --upgrade \
         pip \
         cffi \
-		tencentcloud-sdk-python \
 	&& pip3 install \
         ansible==${ANSIBLE_VERSION} \
         ansible-lint==${ANSIBLE_LINT_VERSION} \
