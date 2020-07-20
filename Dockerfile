@@ -54,8 +54,14 @@ RUN set -xe \
     && rm -rf /var/cache/apk/* \
     && npm install -g yo generator-hubot \
     && adduser -s /bin/sh -D hubot \
-	&& echo "hubot ALL=(ALL) ALL" >> /etc/sudoers \
-	&& mkdir /etc/ansible
+    && echo "hubot ALL=(ALL) ALL" >> /etc/sudoers \
+    && mkdir /etc/ansible \
+    && echo -e """\
+\n\
+Host *\n\
+    StrictHostKeyChecking no\n\
+    UserKnownHostsFile=/dev/null\n\
+""" >> /etc/ssh/ssh_config
 
 USER hubot
 WORKDIR /home/hubot
