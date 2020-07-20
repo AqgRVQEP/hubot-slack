@@ -19,11 +19,11 @@ RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/v3.9/ma
 
 RUN apk --update add --virtual \
         .build-deps \
-        libffi-dev \
         openssl-dev \
         build-base
 
 RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/v3.9/main/ python3-dev=3.6.9-r3 \
+    && apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/v3.9/main/ libffi-dev=3.2.1-r6 \
     && pip3 install --upgrade \
         pip \
         cffi \
