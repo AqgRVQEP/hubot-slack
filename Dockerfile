@@ -83,6 +83,7 @@ RUN set -xe \
                           hubot-script-shellcmd \
                           hubot-jenkins-enhanced \
                           hubot-auth \
+                          hubot-slack-jenkins-chatops \
     && sed -i -r 's/^\s+#//' scripts/example.coffee
 
 COPY ./ansible.cfg .ansible.cfg
